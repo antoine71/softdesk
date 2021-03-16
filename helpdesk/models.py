@@ -1,31 +1,41 @@
 from django.db import models
 from django.conf import settings
 
+
+TYPE_CHOICES = (
+    ('projet', 'Projet'),
+    ('produit', 'Produit'),
+    ('application', 'Application'),
+)
+
 PERMISSION_CHOICES = (
-    ('SU', 'super user'),
-    ('NU', 'normal user'),
+    ('manager', 'Manager'),
+    ('contributeur', 'Contributeur'),
 )
 
 PRIORITY_CHOICES = (
-    ('H', 'high'),
-    ('M', 'medium'),
-    ('L', 'low'),
+    ('elevee', 'Élevée'),
+    ('moyenne', 'Moyenne'),
+    ('faible', 'Faible'),
 )
 
 STATUS_CHOICES = (
-    ('O', 'open'),
-    ('C', 'closed'),
+    ('a faire', 'À faire'),
+    ('en cours', 'En Cours'),
+    ('termine', 'Terminé')
+)
+
+TAG_CHOICES = (
+    ('bug', 'Bug'),
+    ('tache', 'Tâche'),
+    ('amelioration', 'Amélioration'),
 )
 
 
 class Project(models.Model):
     title = models.CharField(max_length=128)
     description = models.TextField(max_length=2048)
-    type = models.CharField(max_length=128)
-    author = models.ForeignKey(
-        to=settings.AUTH_USER_MODEL,
-        related_name='projects',
-        on_delete=models.CASCADE)
+    type = models.CharField(choices=TYPE_CHOICES, max_length=128)
 
 
 class Contributor(models.Model):
@@ -38,11 +48,17 @@ class Contributor(models.Model):
     permission = models.CharField(choices=PERMISSION_CHOICES, max_length=128)
     role = models.CharField(max_length=128)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'project'], name='unique_user'),
+        ]
+
 
 class Issue(models.Model):
     title = models.CharField(max_length=128)
-    desc = models.CharField(max_length=128)
-    tag = models.CharField(max_length=128)
+    desc = models.CharField(max_length=2048)
+    tag = models.CharField(choices=TAG_CHOICES, max_length=128)
     priority = models.CharField(choices=PRIORITY_CHOICES, max_length=128)
     project = models.ForeignKey(
         to=Project,
@@ -58,7 +74,7 @@ class Issue(models.Model):
     created_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['created_time']    
+        ordering = ['created_time']
 
 
 class Comment(models.Model):
@@ -72,4 +88,4 @@ class Comment(models.Model):
     created_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['created_time']    
+        ordering = ['created_time']

@@ -1,51 +1,61 @@
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 
 from rest_framework import serializers
-from rest_framework_nested.relations import NestedHyperlinkedRelatedField
+from rest_framework.validators import UniqueTogetherValidator
 
 from .models import Contributor, Project, Issue, Comment
 
 
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['username', 'password']
+
+    def validate_password(self, password):
+        return make_password(password)
+
+
 class ContributorSerializer(serializers.ModelSerializer):
+
+    # user_id = serializers.PrimaryKeyRelatedField(
+    #     queryset=User.objects.all(), source='user')
+    # project = serializers.ReadOnlyField()
 
     class Meta:
         model = Contributor
-        fields = ['user', 'project', 'permission', 'role']
+        fields = ['id', 'user', 'project', 'permission', 'role']
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Contributor.objects.all(),
+                fields=['user', 'project'],
+            ),
+        ]
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-
-    issues = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Issue.objects.all())
-    contributors = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Contributor.objects.all())
-
     class Meta:
         model = Project
-        fields = ['id', 'title', 'description', 'type', 'issues',
-                  'contributors']
+        fields = ['id', 'title', 'description', 'type']
 
 
 class IssueSerializer(serializers.ModelSerializer):
 
+    issue_id = serializers.ReadOnlyField(source='id')
     author = serializers.ReadOnlyField(source='author.username')
-    assignee = serializers.ReadOnlyField(source='assignee.username')
-    comments = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Comment.objects.all())
+    assignee = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Issue
-        fields = ['id', 'title', 'desc', 'tag', 'priority', 'project',
-                  'status', 'author', 'assignee', 'created_time', 'comments']
+        fields = ['issue_id', 'title', 'desc', 'tag', 'priority',
+                  'status', 'author', 'assignee', 'created_time']
 
 
-class CommentSerializer(serializers.HyperlinkedModelSerializer):
+class CommentSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source='author.username')
-    issue = serializers.PrimaryKeyRelatedField(
-        queryset=Issue.objects.all())
 
     class Meta:
         model = Comment
-        fields = ['id', 'description', 'author', 'issue',
-                  'created_time']
-
+        fields = ['id', 'description', 'author', 'created_time']
