@@ -19,8 +19,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ContributorSerializer(serializers.ModelSerializer):
 
-    # user_id = serializers.PrimaryKeyRelatedField(
-    #     queryset=User.objects.all(), source='user')
+    user = serializers.SlugRelatedField(
+        queryset=User.objects.all(), slug_field='username')
     # project = serializers.ReadOnlyField()
 
     class Meta:
@@ -44,8 +44,8 @@ class IssueSerializer(serializers.ModelSerializer):
 
     issue_id = serializers.ReadOnlyField(source='id')
     author = serializers.ReadOnlyField(source='author.username')
-    assignee = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), default=serializers.CurrentUserDefault())
+    assignee = serializers.SlugRelatedField(
+        queryset=User.objects.all(), slug_field='username', default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Issue
