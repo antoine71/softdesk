@@ -4,7 +4,7 @@ Openclassrooms - Parcours développement Python Projet 10
 
 ## Status
 
-This project is under developement
+This project is ready for evaluation.
 
 ## Description
 
