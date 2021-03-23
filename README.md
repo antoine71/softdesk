@@ -8,13 +8,13 @@ This project is under developement
 
 ## Description
 
-Softdesk is an API that allows user to create and track technical issues.
+Softdesk is an API that allows users to create and track technical issues.
 
-This API is designed to operate in the backend of iOS, Android or web applications. The applicaiton shall aloow users to create projects, add users, create issues and comments, assign priorities or tags etc.
+This API is designed to operate in the backend of an iOS, Android or web application. The application shall allow users to create projects, add collaborators, create issues and comments, assign priorities or tags etc.
 
-The applications shall use termination points of the API to request and write data.
+The application shall use the termination points of the API to request and write data.
 
-The documentation of the API is available at the following adress: [postman documentation](https://documenter.getpostman.com/view/14947762/TzCFgqFn)
+The documentation of the API is available at the following location: [postman documentation](https://documenter.getpostman.com/view/14947762/TzCFgqFn)
 
 ## Installation
 
