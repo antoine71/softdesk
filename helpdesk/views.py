@@ -26,7 +26,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, IsProjectManager]
 
     def create(self, request):
-        serializer = ProjectSerializer(context={'request': request}, data=request.data)
+        serializer = ProjectSerializer(
+            context={'request': request}, data=request.data)
         if serializer.is_valid():
             serializer.save()
             contributor = Contributor(
@@ -77,7 +78,8 @@ class IssueViewSet(viewsets.ViewSet):
     def create(self, request, project_pk=None):
         project = get_object_or_404(Project, pk=project_pk)
         self.check_object_permissions(request, project)
-        serializer = IssueSerializer(data=request.data, context={'request': request})
+        serializer = IssueSerializer(
+            data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save(
                 author=self.request.user,

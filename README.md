@@ -18,4 +18,4 @@ This project is under developement
 ## Usage
 
 1. The api can be queried from the following address : `http://localhost:8000/api/`
-2. The documentation of the API and the list of all termination points is available at the following adress: [postman documentation](https://www.getpostman.com/collections/d8c3c1dd385e24e31690)
+2. The documentation of the API and the list of all termination points is available at the following adress: [postman documentation](https://documenter.getpostman.com/view/14947762/TzCFgqFn)
