@@ -8,8 +8,6 @@ This project is under developement
 
 ## Description
 
-SoftDesk est une API permettant de remonter et suivre des problèmes techniques (issue tracking system).
-
 Softdesk is an API that allows user to create and track technical issues.
 
 This API is designed to operate in the backend of iOS, Android or web applications. The applicaiton shall aloow users to create projects, add users, create issues and comments, assign priorities or tags etc.
