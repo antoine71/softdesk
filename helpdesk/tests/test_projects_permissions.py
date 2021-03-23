@@ -100,7 +100,7 @@ class ProjectPermissionsTest(TestCase):
         self.create_read_url = reverse('project-list')
         self.read_update_delete_url = reverse('project-detail',
                                               kwargs={'pk': 1})
-        self.auth_url = reverse('token_obtain_pair')
+        self.auth_url = reverse('token_obtain')
 
         self.client_user1 = Client(
             HTTP_AUTHORIZATION='Bearer '+self.get_token('user1', 'user1')

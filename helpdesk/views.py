@@ -1,23 +1,11 @@
 from rest_framework import permissions, viewsets, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from .models import Contributor, Project, Issue, Comment
 from .serializers import (ContributorSerializer, ProjectSerializer,
-                          IssueSerializer, CommentSerializer, UserSerializer)
+                          IssueSerializer, CommentSerializer)
 from .permissions import IsProjectContributor, IsProjectManager, IsProjectManagerUser
-
-
-class CreateUserView(APIView):
-    serializer_class = UserSerializer
-
-    def post(self, request):
-        user = request.data
-        serializer = UserSerializer(data=user)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -79,7 +67,7 @@ class IssueViewSet(viewsets.ViewSet):
         project = get_object_or_404(Project, pk=project_pk)
         self.check_object_permissions(request, project)
         serializer = IssueSerializer(
-            data=request.data, context={'request': request})
+            data=request.data, context={'request': request, 'project': project_pk})
         if serializer.is_valid():
             serializer.save(
                 author=self.request.user,
@@ -92,7 +80,7 @@ class IssueViewSet(viewsets.ViewSet):
         queryset = Issue.objects.filter(pk=pk, project=project_pk)
         issue = get_object_or_404(queryset, pk=pk)
         self.check_object_permissions(request, issue)
-        serializer = IssueSerializer(issue, data=request.data)
+        serializer = IssueSerializer(issue, data=request.data, context={'request': request, 'project': project_pk})
         if serializer.is_valid():
             serializer.save(
                 author=self.request.user,
@@ -193,12 +181,12 @@ class ContributorViewSet(viewsets.ViewSet):
         project = get_object_or_404(Project, pk=project_pk)
         self.check_object_permissions(request, project)
         data = request.data.copy()
-        data.update({'project': str(project_pk)})
+        if 'project' not in data:
+            data.update({'project': str(project_pk)})
         serializer = ContributorSerializer(data=data)
         if serializer.is_valid():
-            print('test')
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, pk=None, project_pk=None):

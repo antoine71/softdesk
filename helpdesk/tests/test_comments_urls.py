@@ -110,7 +110,7 @@ class CommentUrlsTest(TestCase):
             '/api/projects/2/issues/3/comments/1/',
             '/api/projects/1/issues/2/comments/2/',
         ]
-        self.auth_url = reverse('token_obtain_pair')
+        self.auth_url = reverse('token_obtain')
 
         self.client_user1 = Client(
             HTTP_AUTHORIZATION='Bearer '+self.get_token('user1', 'user1')

@@ -44,7 +44,7 @@ class UserUrlsTest(TestCase):
             '/api/projects/1/users/4/',
             '/api/projects/2/users/1/',
             ]
-        self.auth_url = reverse('token_obtain_pair')
+        self.auth_url = reverse('token_obtain')
 
         self.client_user1 = Client(
             HTTP_AUTHORIZATION='Bearer '+self.get_token('user1', 'user1')

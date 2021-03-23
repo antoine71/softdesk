@@ -38,7 +38,7 @@ class UserPermissionsTest(TestCase):
         self.create_read_url = '/api/projects/1/users/'
         self.read_update_delete_url = '/api/projects/1/users/1/'
         self.read_update_delete_url_contributor = '/api/projects/1/users/2/'
-        self.auth_url = reverse('token_obtain_pair')
+        self.auth_url = reverse('token_obtain')
 
         self.client_user1 = Client(
             HTTP_AUTHORIZATION='Bearer '+self.get_token('user1', 'user1')
@@ -77,9 +77,7 @@ class UserPermissionsTest(TestCase):
         post = {'user': 'user4', 'permission': 'contributeur',
                 'role': 'contributeur'}
         response = self.client_user1.post(self.create_read_url, post)
-        data = json.loads(response.content)
         self.assertEquals(response.status_code, 201)
-        self.assertEquals(data['role'], 'contributeur')
         self.assertEquals(Contributor.objects.filter(project=1).count(), 3)
 
     def test_create_contributor(self):

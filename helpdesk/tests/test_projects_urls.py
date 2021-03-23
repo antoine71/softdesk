@@ -101,7 +101,7 @@ class ProjectUrlsTest(TestCase):
         self.create_read_wrong_url = '/api/project/'
         self.read_update_delete_good_url = '/api/projects/1/'
         self.read_update_delete_wrong_url = '/api/projects/5/'
-        self.auth_url = reverse('token_obtain_pair')
+        self.auth_url = reverse('token_obtain')
 
         self.client_user1 = Client(
             HTTP_AUTHORIZATION='Bearer '+self.get_token('user1', 'user1')

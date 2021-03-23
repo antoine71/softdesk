@@ -92,7 +92,7 @@ class IssuePermissionsTest(TestCase):
 
         self.create_read_url = '/api/projects/1/issues/'
         self.read_update_delete_url = '/api/projects/1/issues/1/'
-        self.auth_url = reverse('token_obtain_pair')
+        self.auth_url = reverse('token_obtain')
 
         self.client_user1 = Client(
             HTTP_AUTHORIZATION='Bearer '+self.get_token('user1', 'user1')
@@ -128,6 +128,20 @@ class IssuePermissionsTest(TestCase):
         data = json.loads(response.content)
         self.assertEquals(data['title'], 'title3')
         self.assertEquals(Issue.objects.filter(project=1).count(), 3)
+
+    def test_create_contributor_wrong_assignee_name(self):
+        post = {'title': 'title3', 'desc': 'description3',
+                'tag': 'bug', 'priority': 'moyenne', 'status': 'en cours',
+                'assignee': 'wrong_assignee'}
+        response = self.client_user1.post(self.create_read_url, post)
+        self.assertEquals(response.status_code, 400)
+
+    def test_create_contributor_assignee_not_registered(self):
+        post = {'title': 'title3', 'desc': 'description3',
+                'tag': 'bug', 'priority': 'moyenne', 'status': 'en cours',
+                'assignee': 'user3'}
+        response = self.client_user1.post(self.create_read_url, post)
+        self.assertEquals(response.status_code, 400)
 
     def test_create_contributor_no_assignee(self):
         post = {'title': 'title3', 'desc': 'description3',

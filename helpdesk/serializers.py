@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-from django.contrib.auth.hashers import make_password
 
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
@@ -7,21 +6,10 @@ from rest_framework.validators import UniqueTogetherValidator
 from .models import Contributor, Project, Issue, Comment
 
 
-class UserSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ['username', 'password']
-
-    def validate_password(self, password):
-        return make_password(password)
-
-
 class ContributorSerializer(serializers.ModelSerializer):
 
     user = serializers.SlugRelatedField(
         queryset=User.objects.all(), slug_field='username')
-    # project = serializers.ReadOnlyField()
 
     class Meta:
         model = Contributor
@@ -45,12 +33,28 @@ class IssueSerializer(serializers.ModelSerializer):
     issue_id = serializers.ReadOnlyField(source='id')
     author = serializers.ReadOnlyField(source='author.username')
     assignee = serializers.SlugRelatedField(
-        queryset=User.objects.all(), slug_field='username', default=serializers.CurrentUserDefault())
+        queryset=User.objects.all(),
+        slug_field='username',
+        default=serializers.CurrentUserDefault()
+    )
 
     class Meta:
         model = Issue
         fields = ['issue_id', 'title', 'desc', 'tag', 'priority',
                   'status', 'author', 'assignee', 'created_time']
+
+    def validate_assignee(self, assignee):
+        """
+        Checks if the assignee is registered as a project contributor
+        """
+        user_id = User.objects.get(username=assignee).id
+        if not Contributor.objects.filter(
+                       user=user_id, project=self.context['project']).exists():
+            error_message = 'The assignee '\
+                            + str(assignee)\
+                            + ' is not registered for the project.'
+            raise serializers.ValidationError(error_message)
+        return assignee
 
 
 class CommentSerializer(serializers.ModelSerializer):
