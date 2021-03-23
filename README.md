@@ -16,7 +16,11 @@ The application shall use the termination points of the API to request and write
 
 The documentation of the API is available at the following location: [postman documentation](https://documenter.getpostman.com/view/14947762/TzCFgqFn)
 
+The API is developped in python using Django Rest Framework.
+
 ## Installation
+
+Python 3 is required to run the API.
 
 1. Clone this repository using `$ git clone https://github.com/antoine71/softdesk.git` (you can also download the code using [as a zip file](https://github.com/antoine71/softdesk/archive/main.zip))
 2. Navigate to the root folder of the repository
